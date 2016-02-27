@@ -1,0 +1,25 @@
+---
+- name: add ossec apt key
+  sudo: yes
+  action: apt_key url=http://ossec.wazuh.com/repos/apt/conf/ossec-key.gpg.key state=present 
+  tags: ossec-hids
+
+- name: add ossec repository
+  sudo: yes
+  action: apt_repository repo="deb http://ossec.wazuh.com/repos/apt/ubuntu {{ansible_lsb.codename}} main" state=present update_cache=yes 
+  when: "ansible_distribution == 'Ubuntu'"  
+  tags: ossec-hids
+
+- name: add ossec repository
+  sudo: yes
+  action: apt_repository repo="deb http://ossec.wazuh.com/repos/apt/debian {{ansible_lsb.codename}} main" state=present update_cache=yes 
+  when: "ansible_distribution == 'Debian'"  
+  tags: ossec-hids
+
+- name: install ossec-hids
+  sudo: yes
+  action: apt pkg="{{item}}" state=present update_cache=yes
+  with_items:
+      - "{{ossec_package_name}}"
+  tags: ossec-hids
+
